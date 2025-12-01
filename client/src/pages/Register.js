@@ -24,7 +24,6 @@ export default function Register() {
     try {
       await register(username, password);
       
-      alert("회원가입이 완료되었습니다!");
       navigate("/login");
     } catch (err) {
       console.error(err);

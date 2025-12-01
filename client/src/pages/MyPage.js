@@ -81,8 +81,6 @@ function MyPage() {
     try {
         await cancelReservation(reservationId);
 
-        alert("예매가 취소되었습니다.");
-
         setReservations((prev) =>
           prev.filter((r) => r.reservation_id !== reservationId)
         );
@@ -103,8 +101,6 @@ function MyPage() {
 
     try {
         await deleteReview(reviewId);
-
-        alert("리뷰가 삭제되었습니다.");
 
         setReviews((prev) => prev.filter((r) => r.review_id !== reviewId));
     } catch (err) {

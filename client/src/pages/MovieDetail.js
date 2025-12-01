@@ -224,7 +224,6 @@ function MovieDetail() {
       await deleteReview(reviewId);
 
       setReviews((prev) => prev.filter((r) => r.review_id !== reviewId));
-      alert("리뷰가 삭제되었습니다!");
     } catch (error) {
       console.error("리뷰 삭제 오류:", error);
       alert("삭제 실패");
