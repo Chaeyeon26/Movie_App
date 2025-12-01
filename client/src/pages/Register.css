@@ -1,0 +1,70 @@
+/* 화면 전체 가운데 정렬 */
+.signup-container {
+  height: calc(100vh - 70px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 회원가입 박스 */
+.signup-box {
+  width: 360px;
+  padding: 40px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* 제목 */
+.signup-title {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* 입력창 */
+.signup-input {
+  width: 100%;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  padding: 0 12px;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  background: #f5f8ff;
+}
+
+/* 버튼 */
+.signup-btn {
+  width: 100%;
+  height: 46px;
+  background: #ffcc00;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.signup-btn:hover {
+  background: #ffb700;
+}
+
+/* 하단 텍스트 */
+.signup-bottom-text {
+  margin-top: 18px;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.signup-link {
+  margin-left: 6px;
+  color: #007bff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.signup-link:hover {
+  text-decoration: underline;
+}

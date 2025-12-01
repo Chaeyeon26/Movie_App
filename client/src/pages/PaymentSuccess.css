@@ -1,0 +1,99 @@
+.ticket-wrapper {
+  width: 100%;
+  max-width: 530px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.ticket-title {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 24px;
+}
+
+.ticket {
+  display: flex;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* 왼쪽 정보 */
+.ticket-left {
+  padding: 20px;
+  width: 70%;
+}
+
+.movie-name {
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.info {
+  font-size: 15px;
+  margin: 6px 0;
+}
+
+.info span {
+  display: inline-block;
+  width: 70px;
+  font-weight: bold;
+}
+
+/* 오른쪽 바코드 */
+.ticket-right {
+  width: 30%;
+  background: #f6f6f6;
+  border-left: 2px dashed #ccc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 10px;
+}
+
+.barcode {
+  width: 70px;
+  height: 120px;
+  background: repeating-linear-gradient(
+    to right,
+    #000 0px,
+    #000 2px,
+    #fff 2px,
+    #fff 6px
+  );
+}
+
+.barcode-number {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #444;
+}
+
+.ticket-btn {
+  margin-top: 25px;
+  width: 100%;
+  padding: 14px 0;
+  background: linear-gradient(135deg, #2c3e50, #1F4068);
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform .15s ease;
+}
+
+.ticket-btn:hover {
+  background: #34495E;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(108, 99, 255, 0.35);
+}
+
+.ticket-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 7px rgba(108, 99, 255, 0.3);
+}

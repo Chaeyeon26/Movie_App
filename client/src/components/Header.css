@@ -1,0 +1,62 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.header-title {
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-right span {
+  margin-right: 8px;
+}
+
+.header-btn {
+  padding: 6px 12px;
+  background: #f3f3f3;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.header-btn:hover {
+  background: #e6e6e6;
+}
+
+/* 영화 상세 페이지에서만 적용되는 투명 헤더 */
+.header-transparent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: transparent !important;
+  box-shadow: none !important;
+  z-index: 100;
+}
+
+/* 글씨를 포스터 위에서도 잘 보이게 */
+.header-transparent * {
+  color: #fff !important; 
+  text-shadow: 0px 0px 4px rgba(0,0,0,0.7);
+}
+
+
+.admin-btn {
+  background: #ffe8e8;
+  border-color: #ffaaab;
+}
+
+.admin-btn:hover {
+  background: #ffdddd;
+}

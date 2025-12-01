@@ -1,0 +1,79 @@
+/* 전체 화면 가운데 정렬 */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 70px);
+  overflow: hidden;
+}
+
+/* 로그인 박스 */
+.login-box {
+  width: 360px;
+  padding: 40px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* 제목 */
+.login-title {
+  margin-bottom: 24px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #333;
+}
+
+/* 입력창 */
+.login-input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fdfdfd;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #ffcc00;
+  box-shadow: 0 0 4px rgba(255, 204, 0, 0.4);
+}
+
+/* 로그인 버튼 */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #ffcc00;
+  color: #222;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.login-btn:hover {
+  background: #ffbb00;
+}
+
+/* 회원가입 텍스트 */
+.signup-text {
+  margin-top: 18px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.signup-link {
+  margin-left: 6px;
+  color: #ff9900;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
