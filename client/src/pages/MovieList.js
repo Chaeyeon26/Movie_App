@@ -18,10 +18,10 @@ function MovieList() {
   useEffect(() => {
     const fetchAllMovies = async () => {
       try {
-        const data = await getMovies(); 
+        const data = await getMovies();
         setMovies(data);
       } catch (err) {
-        console.error("❌ 영화 목록 불러오기 실패:", err);
+        console.error("영화 목록 불러오기 실패:", err);
       }
     };
     fetchAllMovies();
@@ -34,7 +34,7 @@ function MovieList() {
         const data = await getMovieGenres();
         setGenreList(data);
       } catch (err) {
-        console.error("❌ 장르 불러오기 실패:", err);
+        console.error("장르 불러오기 실패:", err);
       }
     };
     fetchGenres();
@@ -53,8 +53,34 @@ function MovieList() {
       const data = await searchMoviesApi(params);
       setMovies(data);
     } catch (err) {
-      console.error("❌ 영화 검색 실패:", err);
-      setMovies([]); 
+      console.error("영화 검색 실패:", err);
+      setMovies([]);
+    }
+  };
+
+  const getPosterUrl = (oldUrl, genre) => {
+    if (!oldUrl || !genre) return oldUrl;
+
+    const genreMap = {
+      '로맨스': 'romance',
+      '스릴러': 'thriller',
+      '액션': 'action',
+      '코미디': 'comedy',
+    };
+    
+    const genreFolder = genreMap[genre]; 
+
+    if (!genreFolder) {
+        return oldUrl;
+    }
+
+    try {
+      const fileName = oldUrl.substring(oldUrl.lastIndexOf('/') + 1);
+
+      return `/posters/${genreFolder}/${fileName}`;
+    } catch (e) {
+      console.error("포스터 URL 재구성 실패:", e);
+      return oldUrl;
     }
   };
 
@@ -62,7 +88,7 @@ function MovieList() {
     <div style={{ padding: "30px", fontFamily: "sans-serif" }}>
       <h1>🎬 영화 목록</h1>
 
-      {/* 🔍 검색 UI */}
+      {/* 검색 UI */}
       <div className="movie-search-container">
         <input
           value={title}
@@ -88,7 +114,7 @@ function MovieList() {
           value={year}
           onChange={(e) => setYear(e.target.value)}
           placeholder="개봉연도"
-          style={{ width: "100px" }}
+        style={{ width: "100px" }}
         />
 
         <button className="movie-search-button" onClick={searchMovies}>
@@ -96,27 +122,39 @@ function MovieList() {
         </button>
       </div>
 
-      {/* 📄 기존 영화 리스트 */}
-      <ul>
+      {/* 영화 카드 그리드 */}
+      <div className="movie-grid">
         {movies.map((movie) => (
-          <li key={movie.movie_id}>
+          <div
+            key={movie.movie_id}
+            className="movie-card"
+          >
             <Link
               to={`/movies/${movie.movie_id}`}
-              style={{
-                fontWeight: "bold",
-                color: "black",
-                textDecoration: "none",
-              }}
+              className="movie-card-link"
             >
-              {movie.title}
-            </Link>{" "}
-            ({movie.genre}, {movie.release_year})
-            <br />
-            평점: {movie.avg_rating == null ? "리뷰 없음" : Number(movie.avg_rating).toFixed(2)}
-            <hr />
-          </li>
+              <img
+                src={getPosterUrl(movie.poster_url, movie.genre)} 
+                alt={movie.title}
+                className="movie-poster"
+              />
+
+              <div className="movie-info">
+                <h3 className="movie-title">{movie.title}</h3>
+                <p className="movie-sub">
+                  {movie.genre} · {movie.release_year}
+                </p>
+                <p className="movie-rating">
+                  평점:{" "}
+                  {movie.avg_rating == null
+                    ? "리뷰 없음"
+                    : Number(movie.avg_rating).toFixed(2)}
+                </p>
+              </div>
+            </Link>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

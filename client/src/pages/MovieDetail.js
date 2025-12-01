@@ -34,6 +34,32 @@ function MovieDetail() {
   const [updatedRating, setUpdatedRating] = useState(0);
   const [updatedComment, setUpdatedComment] = useState("");
 
+  const getPosterUrl = (oldUrl, genre) => {
+    if (!oldUrl || !genre) return oldUrl;
+
+    const genreMap = {
+      '로맨스': 'romance',
+      '스릴러': 'thriller',
+      '액션': 'action',
+      '코미디': 'comedy',
+    };
+    
+    const genreFolder = genreMap[genre]; 
+
+    if (!genreFolder) {
+        return oldUrl;
+    }
+
+    try {
+      const fileName = oldUrl.substring(oldUrl.lastIndexOf('/') + 1);
+
+      return `/posters/${genreFolder}/${fileName}`;
+    } catch (e) {
+      console.error("포스터 URL 재구성 실패:", e);
+      return oldUrl;
+    }
+  };
+
   const filteredScreens = screens.filter((s) => {
     if (!selectedDate) return false;
 
@@ -287,16 +313,17 @@ function MovieDetail() {
       </div>
     );
   };
-  console.log("Review list data:", reviews);
 
   if (!movie) return <div>로딩 중...</div>;
+
+  const bannerPosterUrl = getPosterUrl(movie.poster_url, movie.genre);
 
   return (
     <>
       {/* 전체 화면 폭을 쓰는 상단 배너 */}
       <div
         className="movie-banner"
-        style={{ backgroundImage: `url(${movie.poster_url})` }}
+        style={{ backgroundImage: `url(${bannerPosterUrl})` }}
       >
         <div className="movie-banner-overlay"></div>
 
@@ -535,16 +562,8 @@ function MovieDetail() {
           ) : (
             <div className="recommend-carousel">
               {recommended.map((m, index) => {
-                // 장르별 기본 포스터 매핑
-                const genrePoster = {
-                  로맨스: "/posters/romance.jpg",
-                  액션: "/posters/action.jpg",
-                  코미디: "/posters/comedy.jpg",
-                  스릴러: "/posters/thriller.jpg",
-                };
-
-                const poster = m.poster_url || genrePoster[m.genre] || "/posters/default.jpg"; 
-
+                const posterUrl = getPosterUrl(m.poster_url, m.genre); 
+                
                 return (
                   <div
                     key={m.movie_id}
@@ -552,7 +571,7 @@ function MovieDetail() {
                     onClick={() => navigate(`/movies/${m.movie_id}`)}
                   >
                     <img
-                      src={poster}
+                      src={posterUrl}
                       alt={m.title}
                       className="recommend-poster"
                     />
@@ -563,7 +582,7 @@ function MovieDetail() {
             </div>
           )}
         </div>
-      </div>  
+      </div>  
     </>
   );
 }

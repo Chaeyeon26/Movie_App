@@ -4,7 +4,6 @@ import "./MyPage.css";
 import { getUserReservations, cancelReservation } from "../api/reservations";
 import { getUserReviews, deleteReview } from "../api/reviews";
 
-
 function MyPage() {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
@@ -15,6 +14,31 @@ function MyPage() {
   // 필터 state
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
+
+  const getPosterUrl = (oldUrl, genre) => {
+    if (!oldUrl || !genre) return oldUrl;
+
+    const genreMap = {
+      '로맨스': 'romance',
+      '스릴러': 'thriller',
+      '액션': 'action',
+      '코미디': 'comedy',
+    };
+    
+    const genreFolder = genreMap[genre]; 
+
+    if (!genreFolder) {
+        return oldUrl; 
+    }
+
+    try {
+      const fileName = oldUrl.substring(oldUrl.lastIndexOf('/') + 1);
+      return `/posters/${genreFolder}/${fileName}`;
+    } catch (e) {
+      console.error("포스터 URL 재구성 실패:", e);
+      return oldUrl;
+    }
+  };
 
   // 예약 조회 함수 (필터 적용)
   const fetchReservations = async () => {
@@ -28,7 +52,7 @@ function MyPage() {
       const data = await getUserReservations(user.id, params);
       setReservations(data);
     } catch (err) {
-      console.error("❌ 예매 내역 오류:", err);
+      console.error("예매 내역 오류:", err);
     }
   };
 
@@ -43,7 +67,7 @@ function MyPage() {
             const data = await getUserReviews(user.id);
             setReviews(data);
         } catch (err) {
-            console.error("❌ 리뷰 조회 오류:", err);
+            console.error("리뷰 조회 오류:", err);
         }
     }
     fetchReviews();
@@ -215,7 +239,7 @@ function MyPage() {
               <div className="review-left">
                 <img
                   className="review-poster"
-                  src={movie.poster_url || "/default-poster.png"}
+                  src={getPosterUrl(movie.poster_url, movie.genre)}
                   alt="poster"
                 />
               </div>
