@@ -80,7 +80,7 @@ app.get("/", (req, res) => {
       try {
         await sequelize.authenticate();
         console.log("✅ MySQL DB 연결 성공!");
-        await sequelize.sync({ alter: true });
+        await sequelize.sync();
         console.log("✅ 모든 테이블 동기화 완료!");
 
         // ✅ 영화 더미데이터 추가

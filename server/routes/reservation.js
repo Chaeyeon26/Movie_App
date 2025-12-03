@@ -124,7 +124,8 @@ router.get("/user/:userId", async (req, res) => {
     const { title, date } = req.query;
 
     const where = {
-      user_id: userId
+      user_id: userId,
+      status: "reserved", 
     };
 
     // Screen 날짜 필터링
@@ -143,7 +144,7 @@ router.get("/user/:userId", async (req, res) => {
     }
 
     const reservations = await Reservation.findAll({
-      where: { user_id: userId },
+      where,
       include: [
         {
           model: Screen,
@@ -166,7 +167,7 @@ router.get("/user/:userId", async (req, res) => {
       r => r.Screen && r.Screen.Movie
     );
 
-    res.json(reservations);
+    res.json(result);
   } catch (error) {
     console.error("❌ 예매내역 조회 실패:", error);
     res.status(500).json({ message: "예매내역 조회 실패" });
@@ -212,7 +213,12 @@ router.delete("/:id", async (req, res) => {
     }
 
     // 4) 시작 전이라면 → 정상 취소
-    await Reservation.destroy({ where: { reservation_id: id } });
+    //await Reservation.destroy({ where: { reservation_id: id } });
+
+    await Reservation.update(
+      { status: "cancelled" }, 
+      { where: { reservation_id: id } }
+    );
 
     res.json({ message: "예매가 정상적으로 취소되었습니다." });
   } catch (error) {
@@ -226,7 +232,10 @@ router.get("/screen/:screenId", async (req, res) => {
   try {
     const { screenId } = req.params;
     const reservations = await Reservation.findAll({
-      where: { screen_id: screenId },
+      where: { 
+        screen_id: screenId,
+        status: "reserved", 
+      },
       attributes: ["seat_number"],
     });
     res.json(reservations);
