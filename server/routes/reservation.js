@@ -31,10 +31,22 @@ router.post("/", async (req, res) => {
 
     // 3) 좌석 중복 확인
     const existing = await Reservation.findOne({
-      where: { screen_id, seat_number },
+      where: { screen_id, seat_number }
     });
 
     if (existing) {
+      if (existing.status === "cancelled") {
+        await existing.update({ 
+          status: "reserved",
+          user_id
+        });
+
+        return res.json({
+          message: "취소된 좌석을 다시 예매했습니다.",
+          reservation: existing
+        });
+      }
+
       return res.status(400).json({ message: "이미 예매된 좌석입니다." });
     }
 
@@ -83,21 +95,34 @@ router.post("/multi", async (req, res) => {
     }
 
     // 3) 각 좌석 중복 체크
+    const revived = [];
+    const toInsert = []; 
+
     for (const seat of seat_numbers) {
       const exists = await Reservation.findOne({
         where: { screen_id, seat_number: seat }
       });
+
       if (exists) {
-        return res
-          .status(400)
-          .json({ message: `이미 예매된 좌석: ${seat}` });
+        if (exists.status === "cancelled") {
+          await exists.update({
+            status: "reserved",
+            user_id
+          });
+          revived.push(exists);
+          continue; 
+        }
+
+        return res.status(400).json({ message: `이미 예매된 좌석: ${seat}` });
       }
+
+      toInsert.push(seat);
     }
 
     // 4) 좌석 여러 개 생성
     const created = [];
 
-    for (const seat of seat_numbers) {
+    for (const seat of toInsert) {
       const r = await Reservation.create({
         user_id,
         screen_id,
@@ -108,9 +133,9 @@ router.post("/multi", async (req, res) => {
 
     return res.json({
       message: "여러 좌석 예매 완료!",
-      reservations: created,
+      revived,
+      created,
     });
-
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "예매 실패" });
@@ -169,7 +194,7 @@ router.get("/user/:userId", async (req, res) => {
 
     res.json(result);
   } catch (error) {
-    console.error("❌ 예매내역 조회 실패:", error);
+    console.error("예매내역 조회 실패:", error);
     res.status(500).json({ message: "예매내역 조회 실패" });
   }
 });
@@ -211,9 +236,6 @@ router.delete("/:id", async (req, res) => {
         message: "상영이 이미 시작된 예매는 취소할 수 없습니다.",
       });
     }
-
-    // 4) 시작 전이라면 → 정상 취소
-    //await Reservation.destroy({ where: { reservation_id: id } });
 
     await Reservation.update(
       { status: "cancelled" }, 
