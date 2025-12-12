@@ -94,7 +94,7 @@ router.post("/multi", async (req, res) => {
       });
     }
 
-    // 3) 각 좌석 중복 체크
+    /* 3) 각 좌석 중복 체크
     const revived = [];
     const toInsert = []; 
 
@@ -126,15 +126,44 @@ router.post("/multi", async (req, res) => {
       const r = await Reservation.create({
         user_id,
         screen_id,
-        seat_number: seat,
+        seat_number,
       });
       created.push(r);
+    }*/
+   const reservations = await Reservation.findAll({
+      where: { 
+        screen_id,
+        status: "reserved",
+      },
+    });
+
+    for (const r of reservations) {
+      const reservedSeats = r.seat_number.split(","); // "A1,A2" → ["A1", "A2"]
+
+      for (const seat of seat_numbers) {
+        if (reservedSeats.includes(seat)) {
+          return res.status(400).json({
+            message: `${seat} 좌석은 이미 예매되었습니다.`,
+          });
+        }
+      }
     }
 
+    // 3) 예매 1건만 생성
+    const seat_number = seat_numbers.join(","); // "A1,A2,A3"
+
+    const reservation = await Reservation.create({
+      user_id,
+      screen_id,
+      seat_number, // 그대로 사용
+    });
+
+
     return res.json({
-      message: "여러 좌석 예매 완료!",
-      revived,
-      created,
+      message: "좌석 예매 완료",
+      /*revived,
+      created,*/
+      reservation,
     });
   } catch (err) {
     console.error(err);

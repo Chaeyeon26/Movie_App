@@ -173,7 +173,7 @@ function MovieDetail() {
   const fetchReservedSeats = async (screenId) => {
     try {
       const data = await getReservedSeatsByScreen(screenId);
-      const seats = data.map((r) => r.seat_number);
+      const seats = data.flatMap((r) => r.seat_number.split(","));
       setReservedSeats(seats);
     } catch (error) {
       console.error("예약된 좌석 불러오기 실패:", error);

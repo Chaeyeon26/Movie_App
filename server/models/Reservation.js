@@ -42,12 +42,12 @@ const Reservation = sequelize.define(
     createdAt: "created_at", // 필드명 지정
     updatedAt: false,        // updated_at 생성 X
     underscored: true, // DB 컬럼명 user_id, movie_id 형태로 자동 매핑
-    indexes: [
+    /*indexes: [
       {
         unique: true,
         fields: ["screen_id", "seat_number"], // 같은 상영 내 좌석 중복 방지
       },
-    ],
+    ],*/
   }
 );
 
