@@ -202,3 +202,22 @@
 .delete-btn:hover {
   background-color: #e60000;
 }
+
+.my-save-btn {
+  background: #2196f3;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.my-cancel-btn {
+  background: #f44336;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}

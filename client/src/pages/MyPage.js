@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MyPage.css";
 import { getUserReservations, cancelReservation } from "../api/reservations";
-import { getUserReviews, deleteReview } from "../api/reviews";
+import { getUserReviews, deleteReview, updateReview } from "../api/reviews";
 
 function MyPage() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -10,6 +10,21 @@ function MyPage() {
 
   const [reservations, setReservations] = useState([]);
   const [reviews, setReviews] = useState([]);
+
+  // 리뷰 수정용 state
+  const [editMode, setEditMode] = useState(null);
+  const [updatedRating, setUpdatedRating] = useState(5);
+  const [updatedComment, setUpdatedComment] = useState("");
+
+  const fetchReviews = async () => {
+        if (!user) return;
+        try {
+            const data = await getUserReviews(user.id);
+            setReviews(data);
+        } catch (err) {
+            console.error("리뷰 조회 오류:", err);
+        }
+    };
 
   // 필터 state
   const [title, setTitle] = useState("");
@@ -59,19 +74,7 @@ function MyPage() {
   // 초기 로딩 (예약 및 리뷰 동시 조회)
   useEffect(() => {
     fetchReservations(); 
-    
-    // 리뷰 조회 함수
-    const fetchReviews = async () => {
-        if (!user) return;
-        try {
-            const data = await getUserReviews(user.id);
-            setReviews(data);
-        } catch (err) {
-            console.error("리뷰 조회 오류:", err);
-        }
-    }
     fetchReviews();
-
   }, []); 
 
   // 예매 취소
@@ -107,6 +110,29 @@ function MyPage() {
         console.error(err);
         const errorMessage = err.response?.data?.message || "오류가 발생했습니다.";
         alert(errorMessage);
+    }
+  };
+  // 리뷰 수정 시작 함수 추가됨
+  const startEdit = (rv) => {
+    setEditMode(rv.review_id);
+    setUpdatedRating(rv.rating);
+    setUpdatedComment(rv.comment);
+  };
+
+  // 리뷰 업데이트 함수
+  const handleUpdate = async (reviewId) => {
+    try {
+      await updateReview(reviewId, {
+        rating: updatedRating,
+        comment: updatedComment,
+      });
+
+      await fetchReviews();
+      setEditMode(null);
+
+    } catch (err) {
+      console.error("리뷰 수정 실패:", err);
+      alert("리뷰 수정 실패");
     }
   };
 
@@ -245,45 +271,77 @@ function MyPage() {
                   {movie.title} ({movie.release_year})
                 </div>
 
-                <div className="mypage-review-rating">⭐ {rv.rating} / 5</div>
-
-                <div className="mypage-review-comment">{rv.comment}</div>
-
-                <div className="mypage-review-bottom-row">
-                  <div className="review-date">
-                    작성일: {new Date(rv.created_at).toLocaleDateString("ko-KR")}
-                  </div>
-
-                  <div className="review-actions">
-                    <button
-                      className="edit-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate("/review", {
-                          state: {
-                            reservationId: rv.reservation_id,
-                            reviewId: rv.review_id,
-                            mode: "edit",
-                            previousComment: rv.comment,
-                            previousRating: rv.rating,
-                          },
-                        });
-                      }}
+                {editMode === rv.review_id ? (
+                  <div className="edit-area"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <select
+                      className="edit-rating"
+                      value={updatedRating}
+                      onChange={(e) => setUpdatedRating(Number(e.target.value))}
                     >
-                      수정
-                    </button>
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <option key={n} value={n}>{n}</option>
+                      ))}
+                    </select>
 
-                    <button
-                      className="delete-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteReview(rv.review_id);
-                      }}
-                    >
-                      삭제
-                    </button>
+                    <textarea
+                      className="edit-comment"
+                      value={updatedComment}
+                      onChange={(e) => setUpdatedComment(e.target.value)}
+                      rows="3"
+                    />
+
+                    <div className="review-actions">
+                      <button
+                        className="my-save-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdate(rv.review_id);
+                        }}
+                      >
+                        저장
+                      </button>
+
+                      <button
+                        className="my-cancel-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditMode(null);
+                        }}
+                      >
+                        취소
+                      </button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <>
+                    <div className="mypage-review-rating">⭐ {rv.rating} / 5</div>
+                    <div className="mypage-review-comment">{rv.comment}</div>
+
+                    <div className="review-actions">
+                      <button
+                        className="edit-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEdit(rv);
+                        }}
+                      >
+                        수정
+                      </button>
+
+                      <button
+                        className="delete-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteReview(rv.review_id);
+                        }}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           );
@@ -293,4 +351,4 @@ function MyPage() {
   );
 }
 
-export default MyPage;
+export default MyPage;  
